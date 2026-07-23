@@ -55,6 +55,14 @@ otherwise
 
 The API returns denied access as a normal business decision rather than an HTTP authorization error. It first persists the decision, which guarantees a complete audit trail.
 
+## Resource entity UML
+
+The `SpaceshipResource` TypeORM entity models a provisioned spaceship facility. Each resource has a UUID identity, a unique name, descriptive metadata, an activation state, and a minimum membership tier used by the access-decision service.
+
+[![SpaceshipResource UML class diagram](docs/diagrams/spaceship-resource.svg)](docs/diagrams/spaceship-resource.drawio)
+
+The SVG preview renders directly on GitHub. Open the linked [`spaceship-resource.drawio`](docs/diagrams/spaceship-resource.drawio) file in [draw.io](https://app.diagrams.net/) to edit the source diagram.
+
 ## Quality checks
 
 ```bash
