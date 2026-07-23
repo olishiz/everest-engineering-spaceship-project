@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net" modified="2026-07-24T00:00:00.000Z" agent="ChatGPT" version="24.7.17">
+  <diagram id="spaceship-resource-uml" name="Spaceship Resource UML">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Spaceship Resource — UML Class Diagram" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="700" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="entity-box" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1f2937;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="80" y="110" width="500" height="370" as="geometry"/>
+        </mxCell>
+        <mxCell id="entity-header" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;&amp;laquo;entity&amp;raquo;&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:18px;&quot;&gt;&lt;b&gt;SpaceshipResource&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;color:#4b5563;&quot;&gt;Table: resources&lt;/span&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=#e5e7eb;align=center;verticalAlign=middle;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="81" y="111" width="498" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="entity-divider" value="" style="shape=line;strokeWidth=2;strokeColor=#1f2937;" vertex="1" parent="1">
+          <mxGeometry x="80" y="200" width="500" height="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="entity-fields" value="&lt;div style=&quot;line-height:1.8;&quot;&gt;&lt;b&gt;+ id: string&lt;/b&gt; &amp;laquo;PK, UUID&amp;raquo;&lt;br&gt;+ name: string &amp;laquo;unique, max 120&amp;raquo;&lt;br&gt;+ description: string &amp;laquo;text, default ''&amp;raquo;&lt;br&gt;+ minimumTier: MembershipTier &amp;laquo;enum, required&amp;raquo;&lt;br&gt;+ active: boolean &amp;laquo;default true&amp;raquo;&lt;br&gt;+ createdAt: Date &amp;laquo;generated on insert&amp;raquo;&lt;br&gt;+ updatedAt: Date &amp;laquo;generated on update&amp;raquo;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=14;fontFamily=Courier New;spacingLeft=14;spacingTop=12;" vertex="1" parent="1">
+          <mxGeometry x="90" y="215" width="475" height="245" as="geometry"/>
+        </mxCell>
+        <mxCell id="enum-box" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1f2937;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="750" y="170" width="300" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="enum-header" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;&amp;laquo;enumeration&amp;raquo;&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:18px;&quot;&gt;&lt;b&gt;MembershipTier&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=#dbeafe;align=center;verticalAlign=middle;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="751" y="171" width="298" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="enum-divider" value="" style="shape=line;strokeWidth=2;strokeColor=#1f2937;" vertex="1" parent="1">
+          <mxGeometry x="750" y="245" width="300" height="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="enum-values" value="&lt;div style=&quot;line-height:2;&quot;&gt;SILVER&lt;br&gt;GOLD&lt;br&gt;PLATINUM&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=15;fontFamily=Courier New;spacingLeft=18;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="765" y="260" width="260" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="tier-edge" value="minimumTier" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;dashed=1;strokeWidth=2;fontSize=13;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="entity-box" target="enum-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="note" value="TypeORM decorators define persistence metadata; the class remains the domain-facing entity used by NestJS services." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fef3c7;strokeColor=#92400e;fontSize=13;align=left;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="610" y="440" width="440" height="95" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
