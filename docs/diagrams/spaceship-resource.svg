@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620" role="img" aria-labelledby="title desc">
+  <title id="title">SpaceshipResource UML class diagram</title>
+  <desc id="desc">UML diagram showing the SpaceshipResource TypeORM entity and its dependency on the MembershipTier enumeration.</desc>
+  <style>
+    .title { font: 700 28px Arial, sans-serif; fill: #111827; }
+    .stereotype { font: 700 15px Arial, sans-serif; fill: #374151; }
+    .class-name { font: 700 22px Arial, sans-serif; fill: #111827; }
+    .meta { font: 14px Arial, sans-serif; fill: #4b5563; }
+    .field { font: 15px "Courier New", monospace; fill: #111827; }
+    .label { font: 15px Arial, sans-serif; fill: #111827; }
+    .note { font: 14px Arial, sans-serif; fill: #78350f; }
+  </style>
+  <rect width="1100" height="620" fill="#ffffff"/>
+  <text x="55" y="52" class="title">Spaceship Resource — UML Class Diagram</text>
+
+  <rect x="55" y="95" width="540" height="405" fill="#ffffff" stroke="#1f2937" stroke-width="2"/>
+  <rect x="56" y="96" width="538" height="92" fill="#e5e7eb"/>
+  <text x="325" y="122" text-anchor="middle" class="stereotype">«entity»</text>
+  <text x="325" y="150" text-anchor="middle" class="class-name">SpaceshipResource</text>
+  <text x="325" y="174" text-anchor="middle" class="meta">Table: resources</text>
+  <line x1="55" y1="188" x2="595" y2="188" stroke="#1f2937" stroke-width="2"/>
+
+  <text x="78" y="225" class="field" font-weight="700">+ id: string «PK, UUID»</text>
+  <text x="78" y="265" class="field">+ name: string «unique, max 120»</text>
+  <text x="78" y="305" class="field">+ description: string «text, default ''»</text>
+  <text x="78" y="345" class="field">+ minimumTier: MembershipTier «enum, required»</text>
+  <text x="78" y="385" class="field">+ active: boolean «default true»</text>
+  <text x="78" y="425" class="field">+ createdAt: Date «generated on insert»</text>
+  <text x="78" y="465" class="field">+ updatedAt: Date «generated on update»</text>
+
+  <rect x="755" y="145" width="290" height="240" fill="#ffffff" stroke="#1f2937" stroke-width="2"/>
+  <rect x="756" y="146" width="288" height="88" fill="#dbeafe"/>
+  <text x="900" y="173" text-anchor="middle" class="stereotype">«enumeration»</text>
+  <text x="900" y="205" text-anchor="middle" class="class-name">MembershipTier</text>
+  <line x1="755" y1="234" x2="1045" y2="234" stroke="#1f2937" stroke-width="2"/>
+  <text x="785" y="275" class="field">SILVER</text>
+  <text x="785" y="315" class="field">GOLD</text>
+  <text x="785" y="355" class="field">PLATINUM</text>
+
+  <path d="M595 342 H680 V265 H755" fill="none" stroke="#1f2937" stroke-width="2" stroke-dasharray="8 6"/>
+  <path d="M743 257 L755 265 L743 273" fill="none" stroke="#1f2937" stroke-width="2"/>
+  <rect x="625" y="310" width="112" height="26" fill="#ffffff"/>
+  <text x="681" y="328" text-anchor="middle" class="label">minimumTier</text>
+
+  <path d="M650 455 h380 v100 h-365 l-15 -15 z" fill="#fef3c7" stroke="#92400e" stroke-width="1.5"/>
+  <text x="675" y="486" class="note">TypeORM decorators define persistence metadata.</text>
+  <text x="675" y="510" class="note">The class remains the domain-facing entity used</text>
+  <text x="675" y="534" class="note">by NestJS services and repositories.</text>
+</svg>
