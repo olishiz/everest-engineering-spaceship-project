@@ -87,3 +87,15 @@ This repository follows a lightweight GitHub Spec Kit structure:
 ## AI usage disclosure
 
 AI assistance was used to structure the specification, scaffold repetitive framework code, and identify test cases. The implementation was manually reviewed against the business rules, compiled under strict TypeScript, linted, and tested. Architectural choices, assumptions, naming, and error behaviour remain deliberate engineering decisions that can be explained and defended.
+
+## Command deck micro-frontend
+
+The repository also includes a standalone React command deck in [`frontend/`](frontend). It visualises passengers, tier-gated ship resources, access decisions, and audit activity while preserving the backend API exactly as implemented.
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+It runs with an interactive demo adapter by default and can be switched to a live backend origin from the interface. See the [frontend README](frontend/README.md) for the API boundary and Cloudflare Pages build settings.
