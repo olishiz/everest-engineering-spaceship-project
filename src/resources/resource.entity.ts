@@ -12,7 +12,8 @@ export class SpaceshipResource {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ unique: true, length: 120 }) name: string;
   @Column({ type: 'text', default: '' }) description: string;
-  @Column({ type: 'enum', enum: MembershipTier }) minimumTier: MembershipTier;
+  @Column({ type: 'enum', enum: MembershipTier, enumName: 'membership_tier_enum' })
+  minimumTier: MembershipTier;
   @Column({ default: true }) active: boolean;
   @CreateDateColumn() createdAt: Date;
   @UpdateDateColumn() updatedAt: Date;

@@ -8,5 +8,18 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   eslintPluginPrettierRecommended,
-  { languageOptions: { globals: { ...globals.node, ...globals.jest }, parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname } }, rules: { '@typescript-eslint/no-explicit-any': 'off' } },
+  {
+    languageOptions: {
+      globals: { ...globals.node, ...globals.jest },
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+    },
+    rules: { '@typescript-eslint/no-explicit-any': 'off' },
+  },
+  {
+    files: ['test/**/*.ts'],
+    rules: {
+      // Nest exposes the adapter instance as `any`; Supertest accepts that runtime server value.
+      '@typescript-eslint/no-unsafe-argument': 'off',
+    },
+  },
 );

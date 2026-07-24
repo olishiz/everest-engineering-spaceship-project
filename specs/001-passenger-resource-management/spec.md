@@ -32,21 +32,34 @@ A Crew Lead can provision a resource with a minimum tier and later decommission 
 
 ### US3 — Access a resource (P1)
 
-A passenger can use an active resource when their tier meets or exceeds the resource minimum.
+A passenger can discover and use active resources when their tier meets or exceeds the resource
+minimum.
 
 **Acceptance criteria**
 
+- Discovery returns only active resources available through tier inheritance.
+- Passenger identity scopes discovery, access, and history to the caller.
 - Eligible access is allowed.
 - Insufficient membership or an inactive resource is denied.
 - Every allowed or denied attempt creates an immutable audit record with a reason.
 
-### US4 — Review usage (P2)
+### US4 — Review personal usage (P2)
 
-A Crew Lead can view passenger history, usage grouped by resource, and the most popular resource.
+A passenger can review their own access history without selecting another passenger by path.
 
 **Acceptance criteria**
 
 - History is chronological and includes denied attempts.
+- One passenger cannot retrieve another passenger's self-service history.
+
+### US5 — Review operational usage (P2)
+
+A Crew Lead can view recent activity, passenger history, usage grouped by passenger tier or
+resource, and the most popular resource.
+
+**Acceptance criteria**
+
+- Tier reports include total, allowed, and denied attempts for all three tiers.
 - Popularity counts successful access only.
 - A tie is resolved deterministically by resource name.
 
@@ -54,10 +67,12 @@ A Crew Lead can view passenger history, usage grouped by resource, and the most 
 
 - Exactly three seeded Crew Leads exist; runtime creation of a fourth is unsupported.
 - Tier rank is `SILVER < GOLD < PLATINUM`.
-- Audit records are never updated or deleted by the application.
+- Audit records snapshot relevant names and tiers and cannot be updated or deleted in PostgreSQL.
 
 ## Assumptions
 
 - Authentication is represented by a required `x-crew-lead-id` header for administrative endpoints; production identity-provider integration is outside the exercise.
+- Passenger identity is represented by a required `x-passenger-id` header for self-service
+  endpoints.
 - Crew Leads are seeded from deterministic IDs at startup.
 - Reports count successful access unless explicitly requesting full history.

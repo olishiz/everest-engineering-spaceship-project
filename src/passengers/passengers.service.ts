@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { ChangeTierDto, CreatePassengerDto } from './passenger.dto';
 import { Passenger } from './passenger.entity';
 
@@ -10,9 +10,18 @@ export class PassengersService {
 
   async create(dto: CreatePassengerDto): Promise<Passenger> {
     const email = dto.email.trim().toLowerCase();
-    if (await this.repository.existsBy({ email }))
-      throw new ConflictException('Passenger email already exists');
-    return this.repository.save(this.repository.create({ ...dto, name: dto.name.trim(), email }));
+    try {
+      return await this.repository.save(
+        this.repository.create({ ...dto, name: dto.name.trim(), email }),
+      );
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        (error.driverError as { code?: string }).code === '23505'
+      )
+        throw new ConflictException('Passenger email already exists');
+      throw error;
+    }
   }
 
   findAll(): Promise<Passenger[]> {

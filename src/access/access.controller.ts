@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Param,
+  ParseIntPipe,
+  ParseUUIDPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CrewLeadGuard } from '../crew-leads/crew-lead.guard';
 import { AttemptAccessDto } from './access.dto';
@@ -8,7 +19,10 @@ import { AccessService } from './access.service';
 @Controller('access')
 export class AccessController {
   constructor(private readonly service: AccessService) {}
-  @Post('attempts') attempt(@Body() dto: AttemptAccessDto) {
+  @Post('attempts')
+  @ApiSecurity('crew-lead')
+  @UseGuards(CrewLeadGuard)
+  attempt(@Body() dto: AttemptAccessDto) {
     return this.service.attempt(dto);
   }
   @Get('passengers/:passengerId/history')
@@ -28,5 +42,17 @@ export class AccessController {
   @UseGuards(CrewLeadGuard)
   mostPopular() {
     return this.service.mostPopularResource();
+  }
+  @Get('reports/tiers')
+  @ApiSecurity('crew-lead')
+  @UseGuards(CrewLeadGuard)
+  byPassengerTier() {
+    return this.service.usageByPassengerTier();
+  }
+  @Get('reports/activity')
+  @ApiSecurity('crew-lead')
+  @UseGuards(CrewLeadGuard)
+  latestActivity(@Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number) {
+    return this.service.latestActivity(limit);
   }
 }

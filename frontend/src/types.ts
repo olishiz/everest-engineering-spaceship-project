@@ -5,7 +5,11 @@ export type Passenger = {
   name: string;
   email: string;
   tier: Tier;
+  createdAt?: string;
+  updatedAt?: string;
 };
+
+export type ResourceIcon = 'sleep' | 'food' | 'oxygen' | 'medical' | 'cabin' | 'recreation';
 
 export type ShipResource = {
   id: string;
@@ -14,7 +18,9 @@ export type ShipResource = {
   minimumTier: Tier;
   active: boolean;
   zone: string;
-  icon: 'sleep' | 'food' | 'oxygen' | 'medical' | 'cabin' | 'recreation';
+  icon: ResourceIcon;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type AccessDecision = {
@@ -29,3 +35,20 @@ export type AccessDecision = {
   reason: 'TIER_ELIGIBLE' | 'INSUFFICIENT_TIER' | 'RESOURCE_INACTIVE';
   attemptedAt: string;
 };
+
+export type ResourceUsage = {
+  resourceId: string;
+  resourceName: string;
+  successfulUses: number;
+};
+
+export type TierUsage = {
+  passengerTier: Tier;
+  totalAttempts: number;
+  successfulUses: number;
+  deniedAttempts: number;
+};
+
+export type CreatePassengerInput = Pick<Passenger, 'name' | 'email' | 'tier'>;
+export type CreateResourceInput = Pick<ShipResource, 'name' | 'description' | 'minimumTier'>;
+export type DashboardSection = 'overview' | 'passengers' | 'resources' | 'activity';
