@@ -1,0 +1,135 @@
+<mxfile host="app.diagrams.net" modified="2026-07-24T00:00:00.000Z" agent="Codex" version="24.7.17">
+  <diagram id="passenger-resource-data-model" name="DTO · Entity · Database Mapping">
+    <mxGraphModel dx="2300" dy="1940" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="1940" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="Passenger Resource Management — DTO, Entity &amp;amp; Database Mapping" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=30;fontStyle=1;fontColor=#0f172a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1600" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="NestJS validation → application policy → TypeORM persistence → PostgreSQL schema" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="40" y="65" width="1400" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend" value="&lt;b&gt;Legend&lt;/b&gt; &amp;nbsp; &lt;font color=&quot;#2563eb&quot;&gt;■ DTO / API input&lt;/font&gt; &amp;nbsp; &lt;font color=&quot;#059669&quot;&gt;■ TypeORM entity&lt;/font&gt; &amp;nbsp; &lt;font color=&quot;#ea580c&quot;&gt;■ PostgreSQL&lt;/font&gt; &amp;nbsp; dashed = maps/uses &amp;nbsp; solid = persists &amp;nbsp; crow's foot = FK cardinality" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontSize=15;fontColor=#334155;align=left;verticalAlign=middle;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="28" width="800" height="62" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lane-dto" value="API CONTRACTS / VALIDATION" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontSize=17;fontStyle=1;fontColor=#1e3a8a;align=center;" vertex="1" parent="1">
+          <mxGeometry x="40" y="115" width="640" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane-entity" value="APPLICATION / TYPEORM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=17;fontStyle=1;fontColor=#064e3b;align=center;" vertex="1" parent="1">
+          <mxGeometry x="740" y="115" width="700" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="lane-db" value="POSTGRESQL (InitialSchema1784870400000)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffedd5;strokeColor=#ea580c;fontSize=17;fontStyle=1;fontColor=#7c2d12;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="115" width="760" height="52" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="create-passenger-dto" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«DTO»&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:20px;&quot;&gt;&lt;b&gt;CreatePassengerDto&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;hr&gt;&lt;div style=&quot;line-height:1.55;&quot;&gt;&lt;b&gt;+ name: string&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;required · trim · non-empty · max 120&lt;br&gt;&lt;b&gt;+ email: string&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;required · trim · lowercase · email · max 254&lt;br&gt;&lt;b&gt;+ tier: MembershipTier&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;required · enum validation&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;strokeWidth=2;fontSize=15;fontColor=#172554;align=left;verticalAlign=top;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="60" y="205" width="590" height="275" as="geometry"/>
+        </mxCell>
+        <mxCell id="change-tier-dto" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«DTO» ChangeTierDto&lt;/b&gt;&lt;/div&gt;&lt;hr&gt;&lt;b&gt;+ tier: MembershipTier&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;required · enum validation&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;PATCH /passengers/:id/tier&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;strokeWidth=2;fontSize=15;fontColor=#172554;align=left;verticalAlign=top;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="60" y="505" width="590" height="150" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="passenger-entity" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«entity»&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:20px;&quot;&gt;&lt;b&gt;Passenger&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;@Entity('passengers')&lt;/font&gt;&lt;/div&gt;&lt;hr&gt;&lt;div style=&quot;font-family:Courier New;line-height:1.55;&quot;&gt;&lt;b&gt;+ id: string&lt;/b&gt; «PK, generated UUID»&lt;br&gt;+ name: string «length 120»&lt;br&gt;+ email: string «unique, length 254»&lt;br&gt;+ tier: MembershipTier «enum»&lt;br&gt;+ createdAt: Date «CreateDateColumn»&lt;br&gt;+ updatedAt: Date «UpdateDateColumn»&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ecfdf5;strokeColor=#059669;strokeWidth=2;fontSize=15;fontColor=#052e16;align=left;verticalAlign=top;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="770" y="245" width="620" height="365" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="passengers-table" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«table» passengers&lt;/b&gt;&lt;/div&gt;&lt;hr&gt;&lt;div style=&quot;font-family:Courier New;line-height:1.48;&quot;&gt;&lt;b&gt;id&lt;/b&gt; uuid NOT NULL DEFAULT gen_random_uuid() «PK»&lt;br&gt;&lt;b&gt;name&lt;/b&gt; varchar(120) NOT NULL&lt;br&gt;&lt;b&gt;email&lt;/b&gt; varchar(254) NOT NULL «UQ»&lt;br&gt;&lt;b&gt;tier&lt;/b&gt; membership_tier_enum NOT NULL&lt;br&gt;&lt;b&gt;&quot;createdAt&quot;&lt;/b&gt; timestamptz NOT NULL DEFAULT now()&lt;br&gt;&lt;b&gt;&quot;updatedAt&quot;&lt;/b&gt; timestamptz NOT NULL DEFAULT now()&lt;/div&gt;&lt;hr&gt;&lt;b&gt;Constraints&lt;/b&gt;&lt;br&gt;PK_passengers(id)&lt;br&gt;UQ_passengers_email(email)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#ea580c;strokeWidth=2;fontSize=14;fontColor=#431407;align=left;verticalAlign=top;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="225" width="690" height="410" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="create-resource-dto" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«DTO»&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:20px;&quot;&gt;&lt;b&gt;CreateResourceDto&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;hr&gt;&lt;div style=&quot;line-height:1.55;&quot;&gt;&lt;b&gt;+ name: string&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;required · trim · non-empty · max 120&lt;br&gt;&lt;b&gt;+ description?: string&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;optional · trim · max 1000&lt;br&gt;&lt;b&gt;+ minimumTier: MembershipTier&lt;/b&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;required · enum validation&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;strokeWidth=2;fontSize=15;fontColor=#172554;align=left;verticalAlign=top;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="60" y="725" width="590" height="295" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="resource-entity" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«entity»&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:20px;&quot;&gt;&lt;b&gt;SpaceshipResource&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;@Entity('resources')&lt;/font&gt;&lt;/div&gt;&lt;hr&gt;&lt;div style=&quot;font-family:Courier New;line-height:1.55;&quot;&gt;&lt;b&gt;+ id: string&lt;/b&gt; «PK, generated UUID»&lt;br&gt;+ name: string «unique, length 120»&lt;br&gt;+ description: string «text, default ''»&lt;br&gt;+ minimumTier: MembershipTier «enum»&lt;br&gt;+ active: boolean «default true»&lt;br&gt;+ createdAt: Date «CreateDateColumn»&lt;br&gt;+ updatedAt: Date «UpdateDateColumn»&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ecfdf5;strokeColor=#059669;strokeWidth=2;fontSize=15;fontColor=#052e16;align=left;verticalAlign=top;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="770" y="705" width="620" height="410" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="resources-table" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«table» resources&lt;/b&gt;&lt;/div&gt;&lt;hr&gt;&lt;div style=&quot;font-family:Courier New;line-height:1.45;&quot;&gt;&lt;b&gt;id&lt;/b&gt; uuid NOT NULL DEFAULT gen_random_uuid() «PK»&lt;br&gt;&lt;b&gt;name&lt;/b&gt; varchar(120) NOT NULL «UQ»&lt;br&gt;&lt;b&gt;description&lt;/b&gt; text NOT NULL DEFAULT ''&lt;br&gt;&lt;b&gt;&quot;minimumTier&quot;&lt;/b&gt; membership_tier_enum NOT NULL&lt;br&gt;&lt;b&gt;active&lt;/b&gt; boolean NOT NULL DEFAULT true&lt;br&gt;&lt;b&gt;&quot;createdAt&quot;&lt;/b&gt; timestamptz NOT NULL DEFAULT now()&lt;br&gt;&lt;b&gt;&quot;updatedAt&quot;&lt;/b&gt; timestamptz NOT NULL DEFAULT now()&lt;/div&gt;&lt;hr&gt;&lt;b&gt;Constraints / indexes&lt;/b&gt;&lt;br&gt;PK_resources(id)&lt;br&gt;UQ_resources_name(name)&lt;br&gt;UQ_resources_name_case_insensitive(lower(name))" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#ea580c;strokeWidth=2;fontSize=14;fontColor=#431407;align=left;verticalAlign=top;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="690" width="690" height="480" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="membership-enum" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«enumeration» MembershipTier&lt;/b&gt;&lt;/div&gt;&lt;hr&gt;SILVER (rank 1)&lt;br&gt;GOLD (rank 2)&lt;br&gt;PLATINUM (rank 3)&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;PostgreSQL: membership_tier_enum&lt;br&gt;Inheritance: meetsMinimumTier(actual, minimum)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f3ff;strokeColor=#7c3aed;strokeWidth=2;fontSize=14;fontColor=#2e1065;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1055" width="320" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="access-enums" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«enumerations» Access audit&lt;/b&gt;&lt;/div&gt;&lt;hr&gt;&lt;b&gt;AccessDecision&lt;/b&gt;: ALLOWED · DENIED&lt;br&gt;&lt;b&gt;AccessReason&lt;/b&gt;: TIER_ELIGIBLE · INSUFFICIENT_TIER · RESOURCE_INACTIVE&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;PostgreSQL: access_decision_enum / access_reason_enum&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f3ff;strokeColor=#7c3aed;strokeWidth=2;fontSize=13;fontColor=#2e1065;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="400" y="1055" width="300" height="160" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="attempt-access-dto" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«DTO» AttemptAccessDto&lt;/b&gt;&lt;/div&gt;&lt;hr&gt;&lt;b&gt;+ passengerId: string&lt;/b&gt; «UUID»&lt;br&gt;&lt;b&gt;+ resourceId: string&lt;/b&gt; «UUID»" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;strokeWidth=2;fontSize=15;fontColor=#172554;align=left;verticalAlign=top;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1270" width="500" height="145" as="geometry"/>
+        </mxCell>
+        <mxCell id="access-flow" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;AccessService.attempt() / AccessPolicyService&lt;/b&gt;&lt;/div&gt;&lt;hr&gt;1. Load Passenger and SpaceshipResource by DTO IDs&lt;br&gt;2. Evaluate resource.active and tier rank&lt;br&gt;3. Produce decision + reason&lt;br&gt;4. Snapshot current names and tiers&lt;br&gt;5. &lt;b&gt;Persist UsageRecord before responding&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Policy&lt;/b&gt;&lt;br&gt;inactive → DENIED / RESOURCE_INACTIVE&lt;br&gt;tier too low → DENIED / INSUFFICIENT_TIER&lt;br&gt;otherwise → ALLOWED / TIER_ELIGIBLE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;strokeWidth=2;fontSize=14;fontColor=#0f172a;align=left;verticalAlign=top;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1450" width="610" height="300" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="usage-entity" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«entity»&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:20px;&quot;&gt;&lt;b&gt;UsageRecord&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;@Entity('usage_records')&lt;/font&gt;&lt;/div&gt;&lt;hr&gt;&lt;div style=&quot;font-family:Courier New;line-height:1.45;&quot;&gt;&lt;b&gt;+ id: string&lt;/b&gt; «PK, generated UUID»&lt;br&gt;+ passengerId: string «UUID, FK in migration»&lt;br&gt;+ resourceId: string «UUID, FK in migration»&lt;br&gt;&lt;font color=&quot;#047857&quot;&gt;+ passengerName: string «snapshot, length 120»&lt;br&gt;+ resourceName: string «snapshot, length 120»&lt;br&gt;+ passengerTier: MembershipTier «snapshot»&lt;br&gt;+ requiredTier: MembershipTier «snapshot»&lt;/font&gt;&lt;br&gt;+ decision: AccessDecision «enum»&lt;br&gt;+ reason: AccessReason «enum»&lt;br&gt;+ occurredAt: Date «CreateDateColumn»&lt;/div&gt;&lt;hr&gt;&lt;font color=&quot;#475569&quot;&gt;Scalar FK properties only; no TypeORM relation decorators.&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ecfdf5;strokeColor=#059669;strokeWidth=2;fontSize=14;fontColor=#052e16;align=left;verticalAlign=top;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="770" y="1260" width="620" height="500" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="usage-table" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b&gt;«append-only audit table» usage_records&lt;/b&gt;&lt;/div&gt;&lt;hr&gt;&lt;div style=&quot;font-family:Courier New;line-height:1.38;&quot;&gt;&lt;b&gt;id&lt;/b&gt; uuid NOT NULL DEFAULT gen_random_uuid() «PK»&lt;br&gt;&lt;b&gt;&quot;passengerId&quot;&lt;/b&gt; uuid NOT NULL «FK»&lt;br&gt;&lt;b&gt;&quot;resourceId&quot;&lt;/b&gt; uuid NOT NULL «FK»&lt;br&gt;&lt;b&gt;&quot;passengerName&quot;&lt;/b&gt; varchar(120) NOT NULL «snapshot»&lt;br&gt;&lt;b&gt;&quot;resourceName&quot;&lt;/b&gt; varchar(120) NOT NULL «snapshot»&lt;br&gt;&lt;b&gt;&quot;passengerTier&quot;&lt;/b&gt; membership_tier_enum NOT NULL «snapshot»&lt;br&gt;&lt;b&gt;&quot;requiredTier&quot;&lt;/b&gt; membership_tier_enum NOT NULL «snapshot»&lt;br&gt;&lt;b&gt;decision&lt;/b&gt; access_decision_enum NOT NULL&lt;br&gt;&lt;b&gt;reason&lt;/b&gt; access_reason_enum NOT NULL&lt;br&gt;&lt;b&gt;&quot;occurredAt&quot;&lt;/b&gt; timestamptz NOT NULL DEFAULT now()&lt;/div&gt;&lt;hr&gt;&lt;b&gt;Constraints&lt;/b&gt;&lt;br&gt;PK_usage_records(id)&lt;br&gt;&lt;b&gt;FKs (ON DELETE RESTRICT)&lt;/b&gt;&lt;br&gt;FK_usage_passenger(&quot;passengerId&quot;) → passengers.id&lt;br&gt;FK_usage_resource(&quot;resourceId&quot;) → resources.id&lt;br&gt;&lt;b&gt;Indexes&lt;/b&gt;&lt;br&gt;IDX_usage_passenger_occurred(&quot;passengerId&quot;, &quot;occurredAt&quot;)&lt;br&gt;IDX_usage_resource_decision(&quot;resourceId&quot;, decision)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#ea580c;strokeWidth=2;fontSize=13;fontColor=#431407;align=left;verticalAlign=top;spacing=13;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="1230" width="690" height="535" as="geometry"/>
+        </mxCell>
+        <mxCell id="immutable-trigger" value="&lt;b&gt;Database immutability&lt;/b&gt;&lt;br&gt;TR_usage_records_immutable runs BEFORE UPDATE OR DELETE and calls prevent_usage_record_mutation(). Any mutation raises: “usage records are immutable”. INSERT remains allowed." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff1f2;strokeColor=#e11d48;strokeWidth=2;fontSize=13;fontColor=#881337;align=left;verticalAlign=middle;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="1785" width="690" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="create-passenger-map" value="creates" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 5;strokeColor=#2563eb;strokeWidth=2;endArrow=block;endFill=0;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="create-passenger-dto" target="passenger-entity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="change-tier-map" value="updates tier" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 5;strokeColor=#2563eb;strokeWidth=2;endArrow=block;endFill=0;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="change-tier-dto" target="passenger-entity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="passenger-persists" value="TypeORM maps 1:1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="passenger-entity" target="passengers-table">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="create-resource-map" value="creates" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 5;strokeColor=#2563eb;strokeWidth=2;endArrow=block;endFill=0;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="create-resource-dto" target="resource-entity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="resource-persists" value="TypeORM maps 1:1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="resource-entity" target="resources-table">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="attempt-flow-edge" value="validated input" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#2563eb;strokeWidth=2;endArrow=block;endFill=0;fontSize=13;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="attempt-access-dto" target="access-flow">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="flow-usage-edge" value="builds immutable snapshot" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#64748b;strokeWidth=2;endArrow=block;endFill=0;fontSize=13;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="access-flow" target="usage-entity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="usage-persists" value="INSERT before response" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="usage-entity" target="usage-table">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="passenger-usage-fk" value="FK_usage_passenger  1 : 0..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;strokeColor=#ea580c;strokeWidth=2;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;fontSize=13;labelBackgroundColor=#ffffff;exitX=1;exitY=0.35;entryX=1;entryY=0.25;" edge="1" parent="1" source="passengers-table" target="usage-table">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2250" y="370"/>
+              <mxPoint x="2250" y="1365"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="resource-usage-fk" value="FK_usage_resource  1 : 0..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;strokeColor=#ea580c;strokeWidth=2;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;fontSize=13;labelBackgroundColor=#ffffff;exitX=1;exitY=0.55;entryX=1;entryY=0.42;" edge="1" parent="1" source="resources-table" target="usage-table">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2280" y="955"/>
+              <mxPoint x="2280" y="1455"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="trigger-edge" value="enforces" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#e11d48;strokeWidth=2;endArrow=block;endFill=0;fontSize=13;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="immutable-trigger" target="usage-table">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tier-passenger-edge" value="tier" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#7c3aed;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="membership-enum" target="passenger-entity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="tier-resource-edge" value="minimumTier" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#7c3aed;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="membership-enum" target="resource-entity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="enum-usage-edge" value="decision / reason" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#7c3aed;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="access-enums" target="usage-entity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

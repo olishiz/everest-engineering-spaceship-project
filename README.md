@@ -48,6 +48,25 @@ Feature modules keep transport, orchestration, policy, and persistence concerns 
 - `resources`: inventory lifecycle and tier-filtered discovery
 - `access`: policy decisions, immutable audit records, and usage reports
 
+### DTO, entity, and database mapping
+
+[![Passenger Resource Management data model](docs/diagrams/passenger-resource-data-model.svg)](docs/diagrams/passenger-resource-data-model.svg)
+
+Open the [full-size SVG preview](docs/diagrams/passenger-resource-data-model.svg) or edit the
+[draw.io source](docs/diagrams/passenger-resource-data-model.drawio).
+
+| API input | Application mapping | Persistence result |
+| --------- | ------------------- | ------------------ |
+| `CreatePassengerDto` | `PassengersService.create()` normalizes the name and email, then creates a `Passenger` | Insert into `passengers`; email is unique |
+| `ChangeTierDto` | `PassengersService.changeTier()` changes only `Passenger.tier` | Update `passengers.tier` and the generated `updatedAt` timestamp |
+| `CreateResourceDto` | `ResourcesService.create()` trims text and defaults a missing description to `''`, then creates a `SpaceshipResource` | Insert into `resources`; exact and case-insensitive resource-name uniqueness is enforced |
+| `AttemptAccessDto` | `AccessService.attempt()` loads the referenced passenger/resource, evaluates `AccessPolicyService`, and builds a `UsageRecord` snapshot | Insert into `usage_records` before responding; database FKs use `ON DELETE RESTRICT`, and a trigger rejects every later update/delete |
+
+`UsageRecord.passengerId` and `resourceId` are scalar TypeORM properties rather than relation
+decorators. The reviewed migration supplies the foreign keys and their one-to-many cardinalities.
+The snapshot columns preserve the names and membership requirements that applied when the decision
+was made, even when current passenger or resource data changes later.
+
 ## Prerequisites
 
 - Node.js 22+

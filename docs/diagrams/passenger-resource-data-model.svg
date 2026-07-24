@@ -1,0 +1,326 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2300" height="1960" viewBox="0 0 2300 1960" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">Passenger Resource Management DTO, entity, and database mapping</title>
+  <desc id="diagram-description">UML and data model showing how CreatePassengerDto, ChangeTierDto, CreateResourceDto, and AttemptAccessDto flow through TypeORM entities into PostgreSQL passengers, resources, and immutable usage_records tables.</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L11,6 L1,11" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L11,6 L1,11 Z" fill="#059669"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L11,6 L1,11" fill="none" stroke="#64748b" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L11,6 L1,11" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+    </marker>
+    <style>
+      .title { font: 700 32px Inter, Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 17px Inter, Arial, sans-serif; fill: #475569; }
+      .lane { font: 700 18px Inter, Arial, sans-serif; }
+      .stereotype { font: 700 15px Inter, Arial, sans-serif; letter-spacing: .3px; }
+      .name { font: 700 21px Inter, Arial, sans-serif; fill: #0f172a; }
+      .table-name { font: 700 19px Inter, Arial, sans-serif; fill: #0f172a; }
+      .field { font: 15px "SFMono-Regular", Consolas, "Liberation Mono", monospace; fill: #1e293b; }
+      .field-small { font: 14px "SFMono-Regular", Consolas, "Liberation Mono", monospace; fill: #1e293b; }
+      .body { font: 15px Inter, Arial, sans-serif; fill: #334155; }
+      .body-small { font: 14px Inter, Arial, sans-serif; fill: #334155; }
+      .meta { font: 14px Inter, Arial, sans-serif; fill: #64748b; }
+      .label { font: 600 14px Inter, Arial, sans-serif; fill: #334155; }
+      .snapshot { fill: #047857; }
+      .dto-box { fill: #eff6ff; stroke: #2563eb; stroke-width: 2; }
+      .entity-box { fill: #ecfdf5; stroke: #059669; stroke-width: 2; }
+      .db-box { fill: #fff7ed; stroke: #ea580c; stroke-width: 2; }
+      .enum-box { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 2; }
+      .rule { stroke: #cbd5e1; stroke-width: 1.5; }
+      .map { fill: none; stroke: #2563eb; stroke-width: 2.2; stroke-dasharray: 9 6; marker-end: url(#arrow-blue); }
+      .persist { fill: none; stroke: #059669; stroke-width: 2.4; marker-end: url(#arrow-green); }
+      .flow { fill: none; stroke: #64748b; stroke-width: 2.2; stroke-dasharray: 8 5; marker-end: url(#arrow-gray); }
+      .enum-use { fill: none; stroke: #7c3aed; stroke-width: 1.8; stroke-dasharray: 7 5; marker-end: url(#arrow-purple); }
+      .fk { fill: none; stroke: #ea580c; stroke-width: 2.4; }
+      .label-bg { fill: #ffffff; opacity: .96; }
+    </style>
+  </defs>
+
+  <rect width="2300" height="1960" fill="#ffffff"/>
+  <text id="title-text" x="40" y="48" class="title">Passenger Resource Management — DTO, Entity &amp; Database Mapping</text>
+  <text x="40" y="79" class="subtitle">NestJS validation → application policy → TypeORM persistence → PostgreSQL schema</text>
+
+  <rect x="1455" y="24" width="805" height="67" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="1475" y="49" class="body-small" font-weight="700">Legend</text>
+  <rect x="1540" y="37" width="14" height="14" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="1562" y="50" class="body-small">DTO / API input</text>
+  <rect x="1690" y="37" width="14" height="14" fill="#d1fae5" stroke="#059669"/>
+  <text x="1712" y="50" class="body-small">TypeORM entity</text>
+  <rect x="1850" y="37" width="14" height="14" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="1872" y="50" class="body-small">PostgreSQL</text>
+  <text x="1475" y="76" class="body-small">dashed = maps/uses · solid = persists · crow’s foot = FK cardinality</text>
+
+  <rect x="40" y="115" width="640" height="52" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="360" y="148" text-anchor="middle" class="lane" fill="#1e3a8a">API CONTRACTS / VALIDATION</text>
+  <rect x="740" y="115" width="700" height="52" rx="8" fill="#d1fae5" stroke="#059669"/>
+  <text x="1090" y="148" text-anchor="middle" class="lane" fill="#064e3b">APPLICATION / TYPEORM</text>
+  <rect x="1500" y="115" width="760" height="52" rx="8" fill="#ffedd5" stroke="#ea580c"/>
+  <text x="1880" y="148" text-anchor="middle" class="lane" fill="#7c2d12">POSTGRESQL (InitialSchema1784870400000)</text>
+
+  <!-- Passenger DTOs -->
+  <rect x="60" y="205" width="590" height="275" class="dto-box"/>
+  <text x="355" y="235" text-anchor="middle" class="stereotype" fill="#1e40af">«DTO»</text>
+  <text x="355" y="265" text-anchor="middle" class="name">CreatePassengerDto</text>
+  <line x1="60" y1="283" x2="650" y2="283" class="rule"/>
+  <text x="82" y="315" class="field" font-weight="700">+ name: string</text>
+  <text x="105" y="339" class="body-small">required · trim · non-empty · max 120</text>
+  <text x="82" y="371" class="field" font-weight="700">+ email: string</text>
+  <text x="105" y="395" class="body-small">required · trim · lowercase · email · max 254</text>
+  <text x="82" y="427" class="field" font-weight="700">+ tier: MembershipTier</text>
+  <text x="105" y="451" class="body-small">required · enum validation</text>
+
+  <rect x="60" y="505" width="590" height="150" class="dto-box"/>
+  <text x="355" y="535" text-anchor="middle" class="stereotype" fill="#1e40af">«DTO» ChangeTierDto</text>
+  <line x1="60" y1="552" x2="650" y2="552" class="rule"/>
+  <text x="82" y="583" class="field" font-weight="700">+ tier: MembershipTier</text>
+  <text x="105" y="607" class="body-small">required · enum validation</text>
+  <text x="82" y="635" class="meta">PATCH /passengers/:id/tier</text>
+
+  <!-- Passenger entity -->
+  <rect x="770" y="245" width="620" height="365" class="entity-box"/>
+  <text x="1080" y="274" text-anchor="middle" class="stereotype" fill="#047857">«entity»</text>
+  <text x="1080" y="304" text-anchor="middle" class="name">Passenger</text>
+  <text x="1080" y="328" text-anchor="middle" class="meta">@Entity('passengers')</text>
+  <line x1="770" y1="346" x2="1390" y2="346" class="rule"/>
+  <text x="792" y="378" class="field" font-weight="700">+ id: string «PK, generated UUID»</text>
+  <text x="792" y="412" class="field">+ name: string «length 120»</text>
+  <text x="792" y="446" class="field">+ email: string «unique, length 254»</text>
+  <text x="792" y="480" class="field">+ tier: MembershipTier «enum»</text>
+  <text x="792" y="514" class="field">+ createdAt: Date «CreateDateColumn»</text>
+  <text x="792" y="548" class="field">+ updatedAt: Date «UpdateDateColumn»</text>
+
+  <!-- Passengers table -->
+  <rect x="1530" y="225" width="690" height="410" class="db-box"/>
+  <text x="1875" y="257" text-anchor="middle" class="table-name">«table» passengers</text>
+  <line x1="1530" y1="275" x2="2220" y2="275" class="rule"/>
+  <text x="1552" y="305" class="field-small" font-weight="700">id</text>
+  <text x="1702" y="305" class="field-small">uuid NOT NULL DEFAULT gen_random_uuid() «PK»</text>
+  <text x="1552" y="334" class="field-small" font-weight="700">name</text>
+  <text x="1702" y="334" class="field-small">varchar(120) NOT NULL</text>
+  <text x="1552" y="363" class="field-small" font-weight="700">email</text>
+  <text x="1702" y="363" class="field-small">varchar(254) NOT NULL «UQ»</text>
+  <text x="1552" y="392" class="field-small" font-weight="700">tier</text>
+  <text x="1702" y="392" class="field-small">membership_tier_enum NOT NULL</text>
+  <text x="1552" y="421" class="field-small" font-weight="700">"createdAt"</text>
+  <text x="1702" y="421" class="field-small">timestamptz NOT NULL DEFAULT now()</text>
+  <text x="1552" y="450" class="field-small" font-weight="700">"updatedAt"</text>
+  <text x="1702" y="450" class="field-small">timestamptz NOT NULL DEFAULT now()</text>
+  <line x1="1530" y1="470" x2="2220" y2="470" class="rule"/>
+  <text x="1552" y="499" class="body-small" font-weight="700">Constraints</text>
+  <text x="1552" y="528" class="field-small">PK_passengers(id)</text>
+  <text x="1552" y="557" class="field-small">UQ_passengers_email(email)</text>
+  <text x="1552" y="597" class="meta">Quoted camelCase names are PostgreSQL column identifiers.</text>
+
+  <!-- Passenger mapping edges -->
+  <path d="M650 340 H708 V365 H770" class="map"/>
+  <rect x="672" y="329" width="72" height="25" class="label-bg"/>
+  <text x="708" y="347" text-anchor="middle" class="label">creates</text>
+  <path d="M650 580 H716 V520 H770" class="map"/>
+  <rect x="674" y="535" width="93" height="25" class="label-bg"/>
+  <text x="720" y="553" text-anchor="middle" class="label">updates tier</text>
+  <path d="M1390 420 H1530" class="persist"/>
+  <rect x="1414" y="386" width="95" height="25" class="label-bg"/>
+  <text x="1461" y="404" text-anchor="middle" class="label">TypeORM 1:1</text>
+
+  <!-- Resource DTO -->
+  <rect x="60" y="725" width="590" height="295" class="dto-box"/>
+  <text x="355" y="755" text-anchor="middle" class="stereotype" fill="#1e40af">«DTO»</text>
+  <text x="355" y="785" text-anchor="middle" class="name">CreateResourceDto</text>
+  <line x1="60" y1="803" x2="650" y2="803" class="rule"/>
+  <text x="82" y="835" class="field" font-weight="700">+ name: string</text>
+  <text x="105" y="859" class="body-small">required · trim · non-empty · max 120</text>
+  <text x="82" y="891" class="field" font-weight="700">+ description?: string</text>
+  <text x="105" y="915" class="body-small">optional · trim · max 1000</text>
+  <text x="82" y="947" class="field" font-weight="700">+ minimumTier: MembershipTier</text>
+  <text x="105" y="971" class="body-small">required · enum validation</text>
+
+  <!-- Resource entity -->
+  <rect x="770" y="705" width="620" height="410" class="entity-box"/>
+  <text x="1080" y="734" text-anchor="middle" class="stereotype" fill="#047857">«entity»</text>
+  <text x="1080" y="764" text-anchor="middle" class="name">SpaceshipResource</text>
+  <text x="1080" y="788" text-anchor="middle" class="meta">@Entity('resources')</text>
+  <line x1="770" y1="806" x2="1390" y2="806" class="rule"/>
+  <text x="792" y="838" class="field" font-weight="700">+ id: string «PK, generated UUID»</text>
+  <text x="792" y="872" class="field">+ name: string «unique, length 120»</text>
+  <text x="792" y="906" class="field">+ description: string «text, default ''»</text>
+  <text x="792" y="940" class="field">+ minimumTier: MembershipTier «enum»</text>
+  <text x="792" y="974" class="field">+ active: boolean «default true»</text>
+  <text x="792" y="1008" class="field">+ createdAt: Date «CreateDateColumn»</text>
+  <text x="792" y="1042" class="field">+ updatedAt: Date «UpdateDateColumn»</text>
+
+  <!-- Resources table -->
+  <rect x="1530" y="690" width="690" height="480" class="db-box"/>
+  <text x="1875" y="722" text-anchor="middle" class="table-name">«table» resources</text>
+  <line x1="1530" y1="740" x2="2220" y2="740" class="rule"/>
+  <text x="1552" y="770" class="field-small" font-weight="700">id</text>
+  <text x="1725" y="770" class="field-small">uuid NOT NULL DEFAULT gen_random_uuid() «PK»</text>
+  <text x="1552" y="799" class="field-small" font-weight="700">name</text>
+  <text x="1725" y="799" class="field-small">varchar(120) NOT NULL «UQ»</text>
+  <text x="1552" y="828" class="field-small" font-weight="700">description</text>
+  <text x="1725" y="828" class="field-small">text NOT NULL DEFAULT ''</text>
+  <text x="1552" y="857" class="field-small" font-weight="700">"minimumTier"</text>
+  <text x="1725" y="857" class="field-small">membership_tier_enum NOT NULL</text>
+  <text x="1552" y="886" class="field-small" font-weight="700">active</text>
+  <text x="1725" y="886" class="field-small">boolean NOT NULL DEFAULT true</text>
+  <text x="1552" y="915" class="field-small" font-weight="700">"createdAt"</text>
+  <text x="1725" y="915" class="field-small">timestamptz NOT NULL DEFAULT now()</text>
+  <text x="1552" y="944" class="field-small" font-weight="700">"updatedAt"</text>
+  <text x="1725" y="944" class="field-small">timestamptz NOT NULL DEFAULT now()</text>
+  <line x1="1530" y1="964" x2="2220" y2="964" class="rule"/>
+  <text x="1552" y="993" class="body-small" font-weight="700">Constraints / indexes</text>
+  <text x="1552" y="1022" class="field-small">PK_resources(id)</text>
+  <text x="1552" y="1051" class="field-small">UQ_resources_name(name)</text>
+  <text x="1552" y="1080" class="field-small">UQ_resources_name_case_insensitive(lower(name))</text>
+  <text x="1552" y="1120" class="meta">The expression index prevents case-only duplicate names.</text>
+
+  <!-- Resource mapping edges -->
+  <path d="M650 860 H770" class="map"/>
+  <rect x="674" y="826" width="72" height="25" class="label-bg"/>
+  <text x="710" y="844" text-anchor="middle" class="label">creates</text>
+  <path d="M1390 880 H1530" class="persist"/>
+  <rect x="1414" y="846" width="95" height="25" class="label-bg"/>
+  <text x="1461" y="864" text-anchor="middle" class="label">TypeORM 1:1</text>
+
+  <!-- Enums -->
+  <rect x="60" y="1055" width="320" height="160" rx="8" class="enum-box"/>
+  <text x="220" y="1082" text-anchor="middle" class="stereotype" fill="#5b21b6">«enumeration» MembershipTier</text>
+  <line x1="60" y1="1097" x2="380" y2="1097" class="rule"/>
+  <text x="80" y="1123" class="field-small">SILVER (rank 1)</text>
+  <text x="80" y="1147" class="field-small">GOLD (rank 2)</text>
+  <text x="80" y="1171" class="field-small">PLATINUM (rank 3)</text>
+  <text x="80" y="1197" class="meta">DB: membership_tier_enum</text>
+
+  <rect x="400" y="1055" width="300" height="160" rx="8" class="enum-box"/>
+  <text x="550" y="1082" text-anchor="middle" class="stereotype" fill="#5b21b6">«enumerations» Access audit</text>
+  <line x1="400" y1="1097" x2="700" y2="1097" class="rule"/>
+  <text x="420" y="1123" class="body-small" font-weight="700">AccessDecision</text>
+  <text x="420" y="1146" class="body-small">ALLOWED · DENIED</text>
+  <text x="420" y="1171" class="body-small" font-weight="700">AccessReason</text>
+  <text x="420" y="1194" class="body-small">TIER_ELIGIBLE · INSUFFICIENT_TIER</text>
+  <text x="420" y="1213" class="body-small">RESOURCE_INACTIVE</text>
+
+  <!-- Attempt DTO and decision flow -->
+  <rect x="60" y="1270" width="500" height="145" class="dto-box"/>
+  <text x="310" y="1300" text-anchor="middle" class="stereotype" fill="#1e40af">«DTO» AttemptAccessDto</text>
+  <line x1="60" y1="1317" x2="560" y2="1317" class="rule"/>
+  <text x="82" y="1348" class="field" font-weight="700">+ passengerId: string «UUID»</text>
+  <text x="82" y="1382" class="field" font-weight="700">+ resourceId: string «UUID»</text>
+
+  <rect x="60" y="1450" width="610" height="300" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+  <text x="365" y="1481" text-anchor="middle" class="stereotype" fill="#334155">AccessService.attempt() / AccessPolicyService</text>
+  <line x1="60" y1="1498" x2="670" y2="1498" class="rule"/>
+  <text x="82" y="1527" class="body-small">1. Load Passenger and SpaceshipResource by DTO IDs.</text>
+  <text x="82" y="1553" class="body-small">2. Evaluate resource.active and tier rank.</text>
+  <text x="82" y="1579" class="body-small">3. Produce decision + reason.</text>
+  <text x="82" y="1605" class="body-small">4. Snapshot the current names and tiers.</text>
+  <text x="82" y="1631" class="body-small" font-weight="700">5. Persist UsageRecord before responding.</text>
+  <text x="82" y="1665" class="body-small" font-weight="700">Policy</text>
+  <text x="82" y="1689" class="body-small">inactive → DENIED / RESOURCE_INACTIVE</text>
+  <text x="82" y="1713" class="body-small">tier too low → DENIED / INSUFFICIENT_TIER</text>
+  <text x="82" y="1737" class="body-small">otherwise → ALLOWED / TIER_ELIGIBLE</text>
+
+  <!-- Usage entity -->
+  <rect x="770" y="1260" width="620" height="500" class="entity-box"/>
+  <text x="1080" y="1289" text-anchor="middle" class="stereotype" fill="#047857">«entity»</text>
+  <text x="1080" y="1319" text-anchor="middle" class="name">UsageRecord</text>
+  <text x="1080" y="1343" text-anchor="middle" class="meta">@Entity('usage_records')</text>
+  <line x1="770" y1="1361" x2="1390" y2="1361" class="rule"/>
+  <text x="792" y="1390" class="field-small" font-weight="700">+ id: string «PK, generated UUID»</text>
+  <text x="792" y="1419" class="field-small">+ passengerId: string «UUID, FK in migration»</text>
+  <text x="792" y="1448" class="field-small">+ resourceId: string «UUID, FK in migration»</text>
+  <text x="792" y="1477" class="field-small snapshot">+ passengerName: string «snapshot, length 120»</text>
+  <text x="792" y="1506" class="field-small snapshot">+ resourceName: string «snapshot, length 120»</text>
+  <text x="792" y="1535" class="field-small snapshot">+ passengerTier: MembershipTier «snapshot»</text>
+  <text x="792" y="1564" class="field-small snapshot">+ requiredTier: MembershipTier «snapshot»</text>
+  <text x="792" y="1593" class="field-small">+ decision: AccessDecision «enum»</text>
+  <text x="792" y="1622" class="field-small">+ reason: AccessReason «enum»</text>
+  <text x="792" y="1651" class="field-small">+ occurredAt: Date «CreateDateColumn»</text>
+  <line x1="770" y1="1673" x2="1390" y2="1673" class="rule"/>
+  <text x="792" y="1703" class="meta">Scalar FK properties only; no TypeORM relation decorators.</text>
+  <text x="792" y="1728" class="meta">Green fields preserve historical context after profile/tier changes.</text>
+
+  <!-- Usage table -->
+  <rect x="1530" y="1230" width="690" height="535" class="db-box"/>
+  <text x="1875" y="1262" text-anchor="middle" class="table-name">«append-only audit table» usage_records</text>
+  <line x1="1530" y1="1280" x2="2220" y2="1280" class="rule"/>
+  <text x="1552" y="1306" class="field-small" font-weight="700">id</text>
+  <text x="1740" y="1306" class="field-small">uuid NOT NULL DEFAULT gen_random_uuid() «PK»</text>
+  <text x="1552" y="1331" class="field-small" font-weight="700">"passengerId"</text>
+  <text x="1740" y="1331" class="field-small">uuid NOT NULL «FK»</text>
+  <text x="1552" y="1356" class="field-small" font-weight="700">"resourceId"</text>
+  <text x="1740" y="1356" class="field-small">uuid NOT NULL «FK»</text>
+  <text x="1552" y="1381" class="field-small" font-weight="700">"passengerName"</text>
+  <text x="1740" y="1381" class="field-small snapshot">varchar(120) NOT NULL «snapshot»</text>
+  <text x="1552" y="1406" class="field-small" font-weight="700">"resourceName"</text>
+  <text x="1740" y="1406" class="field-small snapshot">varchar(120) NOT NULL «snapshot»</text>
+  <text x="1552" y="1431" class="field-small" font-weight="700">"passengerTier"</text>
+  <text x="1740" y="1431" class="field-small snapshot">membership_tier_enum NOT NULL «snapshot»</text>
+  <text x="1552" y="1456" class="field-small" font-weight="700">"requiredTier"</text>
+  <text x="1740" y="1456" class="field-small snapshot">membership_tier_enum NOT NULL «snapshot»</text>
+  <text x="1552" y="1481" class="field-small" font-weight="700">decision</text>
+  <text x="1740" y="1481" class="field-small">access_decision_enum NOT NULL</text>
+  <text x="1552" y="1506" class="field-small" font-weight="700">reason</text>
+  <text x="1740" y="1506" class="field-small">access_reason_enum NOT NULL</text>
+  <text x="1552" y="1531" class="field-small" font-weight="700">"occurredAt"</text>
+  <text x="1740" y="1531" class="field-small">timestamptz NOT NULL DEFAULT now()</text>
+  <line x1="1530" y1="1548" x2="2220" y2="1548" class="rule"/>
+  <text x="1552" y="1573" class="body-small" font-weight="700">Constraints</text>
+  <text x="1552" y="1598" class="field-small">PK_usage_records(id)</text>
+  <text x="1552" y="1623" class="body-small" font-weight="700">FKs — both ON DELETE RESTRICT</text>
+  <text x="1552" y="1648" class="field-small">FK_usage_passenger("passengerId") → passengers.id</text>
+  <text x="1552" y="1673" class="field-small">FK_usage_resource("resourceId") → resources.id</text>
+  <text x="1552" y="1698" class="body-small" font-weight="700">Indexes</text>
+  <text x="1552" y="1723" class="field-small">IDX_usage_passenger_occurred("passengerId", "occurredAt")</text>
+  <text x="1552" y="1748" class="field-small">IDX_usage_resource_decision("resourceId", decision)</text>
+
+  <!-- Access mapping -->
+  <path d="M310 1415 V1450" class="map"/>
+  <rect x="326" y="1418" width="108" height="24" class="label-bg"/>
+  <text x="380" y="1435" text-anchor="middle" class="label">validated input</text>
+  <path d="M670 1570 H720 V1510 H770" class="flow"/>
+  <rect x="665" y="1515" width="149" height="24" class="label-bg"/>
+  <text x="739" y="1532" text-anchor="middle" class="label">builds snapshot</text>
+  <path d="M1390 1468 H1530" class="persist"/>
+  <rect x="1407" y="1434" width="118" height="25" class="label-bg"/>
+  <text x="1466" y="1452" text-anchor="middle" class="label">INSERT first</text>
+
+  <!-- Enum dependencies -->
+  <path d="M380 1100 H730 V486 H770" class="enum-use"/>
+  <rect x="680" y="577" width="50" height="23" class="label-bg"/>
+  <text x="705" y="594" text-anchor="middle" class="label">tier</text>
+  <path d="M380 1145 H735 V945 H770" class="enum-use"/>
+  <rect x="647" y="967" width="98" height="23" class="label-bg"/>
+  <text x="696" y="984" text-anchor="middle" class="label">minimumTier</text>
+  <path d="M700 1150 H735 V1590 H770" class="enum-use"/>
+  <rect x="651" y="1196" width="119" height="23" class="label-bg"/>
+  <text x="710" y="1213" text-anchor="middle" class="label">decision / reason</text>
+
+  <!-- Database FK cardinalities routed around the right edge -->
+  <path d="M2220 355 H2260 V1325 H2220" class="fk"/>
+  <line x1="2220" y1="343" x2="2220" y2="367" stroke="#ea580c" stroke-width="2.4"/>
+  <path d="M2220 1313 L2242 1325 L2220 1337 M2220 1317 L2234 1325 L2220 1333" fill="none" stroke="#ea580c" stroke-width="2.2"/>
+  <rect x="2053" y="1134" width="195" height="26" class="label-bg"/>
+  <text x="2150" y="1152" text-anchor="middle" class="label">Passenger 1 : 0..* UsageRecord</text>
+
+  <path d="M2220 900 H2280 V1380 H2220" class="fk"/>
+  <line x1="2220" y1="888" x2="2220" y2="912" stroke="#ea580c" stroke-width="2.4"/>
+  <path d="M2220 1368 L2242 1380 L2220 1392 M2220 1372 L2234 1380 L2220 1388" fill="none" stroke="#ea580c" stroke-width="2.2"/>
+  <rect x="2025" y="1178" width="235" height="26" class="label-bg"/>
+  <text x="2142" y="1196" text-anchor="middle" class="label">SpaceshipResource 1 : 0..* UsageRecord</text>
+
+  <!-- Immutable database trigger -->
+  <path d="M1875 1785 V1765" fill="none" stroke="#e11d48" stroke-width="2" stroke-dasharray="7 5"/>
+  <path d="M1867 1777 L1875 1765 L1883 1777" fill="none" stroke="#e11d48" stroke-width="2"/>
+  <path d="M1530 1785 h690 v120 h-670 l-20 -20 z" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+  <text x="1552" y="1815" class="body-small" fill="#881337" font-weight="700">Database immutability</text>
+  <text x="1552" y="1842" class="body-small" fill="#881337">TR_usage_records_immutable runs BEFORE UPDATE OR DELETE and calls prevent_usage_record_mutation().</text>
+  <text x="1552" y="1867" class="body-small" fill="#881337">Every mutation raises "usage records are immutable"; INSERT remains allowed.</text>
+
+  <text x="40" y="1935" class="meta">Source of truth: src/**/*.{dto,entity}.ts and src/database/migrations/1784870400000-InitialSchema.ts</text>
+</svg>
