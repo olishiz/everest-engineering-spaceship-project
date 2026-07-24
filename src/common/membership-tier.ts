@@ -17,6 +17,10 @@ export function meetsMinimumTier(actual: MembershipTier, minimum: MembershipTier
   return TIER_RANK[actual] >= TIER_RANK[minimum];
 }
 
+export function tiersAvailableTo(tier: MembershipTier): MembershipTier[] {
+  return Object.values(MembershipTier).filter((candidate) => meetsMinimumTier(tier, candidate));
+}
+
 export class MembershipTierResponse {
   @ApiProperty({ enum: MembershipTier })
   tier: MembershipTier;

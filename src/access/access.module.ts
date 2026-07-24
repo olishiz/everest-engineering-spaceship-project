@@ -6,6 +6,7 @@ import { ResourcesModule } from '../resources/resources.module';
 import { AccessController } from './access.controller';
 import { AccessPolicyService } from './access-policy.service';
 import { AccessService } from './access.service';
+import { PassengerExperienceController } from './passenger-experience.controller';
 import { UsageRecord } from './usage-record.entity';
 
 @Module({
@@ -15,7 +16,8 @@ import { UsageRecord } from './usage-record.entity';
     ResourcesModule,
     CrewLeadsModule,
   ],
-  controllers: [AccessController],
+  controllers: [AccessController, PassengerExperienceController],
   providers: [AccessService, AccessPolicyService],
+  exports: [AccessService],
 })
 export class AccessModule {}

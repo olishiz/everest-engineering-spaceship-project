@@ -1,0 +1,11 @@
+.git
+.github
+.idea
+.env
+node_modules
+dist
+coverage
+frontend
+docs
+tmp
+npm-debug.log*

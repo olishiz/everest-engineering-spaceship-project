@@ -1,32 +1,101 @@
-# Spaceship X26 — Passenger Resource Management
+# Spaceship X26 - Passenger Resource Management
 
-A production-minded REST API for managing spaceship passengers, membership-gated resources, and auditable access attempts. Built as the Everest Engineering coding exercise using TypeScript, NestJS, PostgreSQL, TypeORM, Jest, and Swagger.
+A production-minded Passenger Resource Management System for the Everest Engineering coding
+exercise. It combines a NestJS REST API, PostgreSQL persistence, an optional React command deck,
+interactive OpenAPI documentation, migrations, tests, Docker, and CI.
 
-## What it demonstrates
+The system models three membership levels:
 
-- Explicit domain modelling and SOLID service boundaries
-- Silver → Gold → Platinum access inheritance
+```text
+SILVER < GOLD < PLATINUM
+```
+
+Higher tiers inherit access to lower-tier resources. Every valid resource-access attempt is stored
+as an immutable audit decision, whether allowed or denied.
+
+## Assignment coverage
+
 - Exactly three fixed Crew Lead administrators
-- Passenger membership upgrades and downgrades
-- Resource provisioning and idempotent decommissioning
-- Immutable audit records for allowed **and denied** access
-- Passenger history, per-resource usage, and most-popular-resource reports
-- Strict validation, stable error semantics, tests, Docker, and CI
+- Passenger creation, inspection, and tier upgrades/downgrades
+- Resource provisioning, seeded base inventory, and idempotent decommissioning
+- Passenger-facing discovery filtered by active resources and inherited tier access
+- Real-time access validation with explicit decision reasons
+- Passenger-owned history and Crew Lead audit access
+- Reports by resource, by passenger tier, most-popular resource, and latest activity
+- Database-enforced audit immutability
 
-## Quick start
+See [requirement traceability](docs/requirement-traceability.md) for the original assignment-to-code
+and assignment-to-test mapping.
 
-Prerequisites: Node.js 22+, npm, and Docker.
+## Architecture
+
+```text
+React command deck / Swagger / HTTP client
+                    |
+             NestJS controllers
+                    |
+       guards -> application services
+                    |
+       access policy -> TypeORM repositories
+                    |
+                PostgreSQL
+```
+
+Feature modules keep transport, orchestration, policy, and persistence concerns separate:
+
+- `crew-leads`: the fixed administrator manifest and administrative guard
+- `passengers`: passenger profiles, membership changes, and passenger identity guard
+- `resources`: inventory lifecycle and tier-filtered discovery
+- `access`: policy decisions, immutable audit records, and usage reports
+
+## Prerequisites
+
+- Node.js 22+
+- npm
+- Docker with Compose
+
+## Run locally
+
+From the repository root:
 
 ```bash
 cp .env.example .env
 docker compose up -d postgres
-npm install
+npm ci
+npm run db:migrate
 npm run start:dev
 ```
 
-Open Swagger at [http://localhost:3000/docs](http://localhost:3000/docs). API routes use the `/api` prefix.
+Open Swagger at [http://localhost:3000/docs](http://localhost:3000/docs). API routes use the
+`/api` prefix.
 
-Administrative endpoints require one of these `x-crew-lead-id` values:
+To run the optional command deck:
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173), select **LIVE API**, and use
+`http://localhost:3000` as the backend origin.
+
+Alternatively, run the migrated production image and PostgreSQL together:
+
+```bash
+docker compose --profile full up --build
+```
+
+If you previously ran an older revision with `DATABASE_SYNCHRONIZE=true`, its local Docker volume
+has no migration history. For disposable local data, run `docker compose down -v` once before the
+commands above. That command deletes the local PostgreSQL volume; do not use it for data you need to
+keep.
+
+## Typical workflows
+
+### Crew Lead administration
+
+Administrative calls require one of the three fixed `x-crew-lead-id` values:
 
 ```text
 00000000-0000-4000-8000-000000000001
@@ -34,56 +103,105 @@ Administrative endpoints require one of these `x-crew-lead-id` values:
 00000000-0000-4000-8000-000000000003
 ```
 
-## Example workflow
-
 1. Create a passenger with `POST /api/passengers`.
 2. Provision a resource with `POST /api/resources`.
-3. Attempt access with `POST /api/access/attempts`.
-4. View audit history at `GET /api/access/passengers/{id}/history`.
-5. View demand at `GET /api/access/reports/resources`.
+3. Change membership using `PATCH /api/passengers/{id}/tier`.
+4. Decommission a resource using `PATCH /api/resources/{id}/decommission`.
+5. Inspect tier, resource-demand, popularity, and latest-activity reports.
 
-Swagger contains request schemas and provides an interactive client.
+### Passenger self-service
 
-## Access decision
+Passenger calls require `x-passenger-id` containing that passenger's UUID:
+
+1. Discover eligible active resources with `GET /api/passenger/resources`.
+2. Attempt access with `POST /api/passenger/resources/{resourceId}/access`.
+3. Review personal decisions with `GET /api/passenger/history`.
+
+The header-based identities deliberately stand in for a real identity provider so the exercise
+remains self-contained. In production, signed tokens would replace both identity headers.
+
+### Access decision
 
 ```text
 resource is active AND passenger tier >= minimum resource tier
   => ALLOWED / TIER_ELIGIBLE
+resource is inactive
+  => DENIED / RESOURCE_INACTIVE
 otherwise
-  => DENIED / RESOURCE_INACTIVE or INSUFFICIENT_TIER
+  => DENIED / INSUFFICIENT_TIER
 ```
 
-The API returns denied access as a normal business decision rather than an HTTP authorization error. It first persists the decision, which guarantees a complete audit trail.
+A denial is a successful business decision rather than an HTTP authorization failure. The decision
+is persisted before it is returned.
+
+## Useful API routes
+
+| Actor     | Method and route                            | Purpose                                 |
+| --------- | ------------------------------------------- | --------------------------------------- |
+| Crew Lead | `POST /api/passengers`                      | Create a passenger                      |
+| Crew Lead | `PATCH /api/passengers/{id}/tier`           | Upgrade or downgrade membership         |
+| Crew Lead | `POST /api/resources`                       | Provision a resource                    |
+| Crew Lead | `PATCH /api/resources/{id}/decommission`    | Decommission without erasing history    |
+| Passenger | `GET /api/passenger/resources`              | Discover inherited, active resources    |
+| Passenger | `POST /api/passenger/resources/{id}/access` | Validate and record an attempt          |
+| Passenger | `GET /api/passenger/history`                | View personal history                   |
+| Crew Lead | `GET /api/access/reports/resources`         | Successful use by resource              |
+| Crew Lead | `GET /api/access/reports/tiers`             | Allowed/denied totals by passenger tier |
+| Crew Lead | `GET /api/access/reports/most-popular`      | Highest-demand resource                 |
+| Crew Lead | `GET /api/access/reports/activity?limit=50` | Latest audit activity                   |
+
+Swagger contains all request schemas and lets reviewers exercise these routes interactively.
 
 ## Quality checks
 
+With PostgreSQL running:
+
+```bash
+npm run verify
+```
+
+Or run checks independently:
+
 ```bash
 npm run lint
-npm test
 npm run test:cov
+npm run test:e2e
+npm run build
+
+cd frontend
+npm run lint
+npm test
 npm run build
 ```
 
-GitHub Actions runs lint, tests, and build on every push and pull request.
+The fast suite enforces 90% minimum coverage over domain services, policies, and guards. The e2e
+suite creates a temporary PostgreSQL database, applies the real migration, and verifies HTTP
+authorization, validation, lifecycle, access decisions, personal isolation, reports, seeded
+inventory, and database audit immutability. GitHub Actions repeats backend and frontend verification
+on every push and pull request.
 
-## Specification
+## Engineering decisions and trade-offs
 
-This repository follows a lightweight GitHub Spec Kit structure:
-
-- [Constitution](.specify/memory/constitution.md)
-- [Feature specification](specs/001-passenger-resource-management/spec.md)
-- [Implementation plan](specs/001-passenger-resource-management/plan.md)
-- [Task breakdown](specs/001-passenger-resource-management/tasks.md)
-
-## Assumptions and trade-offs
-
-- A required Crew Lead header stands in for authentication. An identity provider, tokens, and permissions would be the next production integration.
-- Crew Leads are a fixed manifest because the assignment requires exactly three. No API can create a fourth.
-- Audit records snapshot names so reports remain intelligible after domain data changes.
-- Successful attempts define resource popularity; denied attempts remain visible in passenger history.
-- Equal popularity is resolved by resource name, making results deterministic.
-- TypeORM synchronization defaults to true for easy evaluation. Production deployments should use reviewed migrations and set `DATABASE_SYNCHRONIZE=false`.
+- Tier comparison lives in one independently tested domain function; enum string ordering is never
+  relied on.
+- Audit records snapshot passenger name, resource name, passenger tier, and required tier. Reports
+  therefore remain historically correct after later profile or membership changes.
+- Production configuration defaults `DATABASE_SYNCHRONIZE` to false. The initial reviewed migration
+  creates schema, indexes, seed inventory, foreign keys, and an update/delete prevention trigger.
+- Resource popularity counts successful access only. Denials remain visible in history and tier
+  reports. Equal popularity is ordered by resource name for deterministic output.
+- A REST latest-activity endpoint provides a current operational snapshot. A high-scale production
+  version could add WebSockets or server-sent events without changing the audit model.
+- Lists are intentionally unpaginated for the exercise's small ship manifest. Pagination would be
+  needed for an unbounded production population.
 
 ## AI usage disclosure
 
-AI assistance was used to structure the specification, scaffold repetitive framework code, and identify test cases. The implementation was manually reviewed against the business rules, compiled under strict TypeScript, linted, and tested. Architectural choices, assumptions, naming, and error behaviour remain deliberate engineering decisions that can be explained and defended.
+AI assistance was used for specification structure, repetitive framework scaffolding, test-case
+brainstorming, and review. Its output was checked against the original PDF, compiled under strict
+TypeScript, linted, exercised against PostgreSQL, and reconciled with the documentation. Missing
+passenger discovery, passenger-owned history, tier reporting, migration safety, CI, and test
+coverage were identified during that review and then implemented and verified.
+
+The architectural choices and trade-offs above are explicit so they can be discussed and defended
+during review.
