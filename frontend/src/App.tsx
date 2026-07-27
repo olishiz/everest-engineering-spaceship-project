@@ -364,7 +364,9 @@ export default function App() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [dark, setDark] = useState(false);
-  const [apiUrl, setApiUrl] = useState(() => localStorage.getItem('x26-api-url') ?? '');
+  const [apiUrl, setApiUrl] = useState(
+    () => localStorage.getItem('x26-api-url') ?? import.meta.env.VITE_API_URL?.trim() ?? '',
+  );
   const [passengers, setPassengers] = useState<Passenger[]>([]);
   const [resources, setResources] = useState<ShipResource[]>([]);
   const [usage, setUsage] = useState<ResourceUsage[]>([]);

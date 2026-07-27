@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: everest-spaceship-api-olishiz
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /docs
+    autoDeployTrigger: commit
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_SSL
+        value: 'true'
+      - key: DATABASE_SYNCHRONIZE
+        value: 'false'
+      - key: CORS_ORIGINS
+        value: https://everest-spaceship-ui-olishiz.onrender.com
+
+  - type: web
+    name: everest-spaceship-ui-olishiz
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    autoDeployTrigger: commit
+    envVars:
+      - key: VITE_API_URL
+        value: https://everest-spaceship-api-olishiz.onrender.com

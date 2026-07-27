@@ -224,3 +224,20 @@ coverage were identified during that review and then implemented and verified.
 
 The architectural choices and trade-offs above are explicit so they can be discussed and defended
 during review.
+
+## Live deployment
+
+- Frontend: [Spaceship X26 Mission Control](https://everest-spaceship-ui-olishiz.onrender.com)
+- API documentation: [Swagger UI](https://everest-spaceship-api-olishiz.onrender.com/docs)
+- API base URL: `https://everest-spaceship-api-olishiz.onrender.com`
+
+The free deployment uses:
+
+| Service | Purpose |
+| ------- | ------- |
+| [Render](https://render.com) | Hosts the React static site and NestJS Docker web service |
+| [Neon](https://neon.tech) | Hosts the managed PostgreSQL database in Singapore |
+| [GitHub](https://github.com/olishiz/everest-engineering-spaceship-project) | Stores the source code and connects the deployment blueprint to the repository |
+
+Render's free web service spins down after inactivity, so the first API request after an idle period
+can take 50 seconds or longer while the service starts.
