@@ -11,17 +11,25 @@ import { ResourcesModule } from './resources/resources.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get('DATABASE_HOST', 'localhost'),
-        port: config.get<number>('DATABASE_PORT', 5432),
-        username: config.get('DATABASE_USER', 'spaceship'),
-        password: config.get('DATABASE_PASSWORD', 'spaceship'),
-        database: config.get('DATABASE_NAME', 'spaceship_x26'),
-        ssl: config.get('DATABASE_SSL', 'false') === 'true' ? { rejectUnauthorized: false } : false,
-        autoLoadEntities: true,
-        synchronize: config.get('DATABASE_SYNCHRONIZE', 'false') === 'true',
-      }),
+      useFactory: (config: ConfigService) => {
+        const databaseUrl = config.get<string>('DATABASE_URL');
+        return {
+          type: 'postgres',
+          ...(databaseUrl
+            ? { url: databaseUrl }
+            : {
+                host: config.get<string>('DATABASE_HOST', 'localhost'),
+                port: config.get<number>('DATABASE_PORT', 5432),
+                username: config.get<string>('DATABASE_USER', 'spaceship'),
+                password: config.get<string>('DATABASE_PASSWORD', 'spaceship'),
+                database: config.get<string>('DATABASE_NAME', 'spaceship_x26'),
+              }),
+          ssl:
+            config.get('DATABASE_SSL', 'false') === 'true' ? { rejectUnauthorized: false } : false,
+          autoLoadEntities: true,
+          synchronize: config.get('DATABASE_SYNCHRONIZE', 'false') === 'true',
+        };
+      },
     }),
     CrewLeadsModule,
     PassengersModule,
